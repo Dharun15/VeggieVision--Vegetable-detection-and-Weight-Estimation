@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <title>Results</title>
+  <style>
+    .custom-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .img-fluid {
+      max-height: 400px;
+      margin-bottom: 20px;
+    }
+    .table-responsive {
+      margin-top: 20px;
+    }
+    .developer-info, .yolo-info {
+      font-size: 0.9rem;
+      color: gray;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container custom-container mt-5">
+    <h1 class="text-center">Results</h1>
+    <!-- Display processed image with bounding boxes -->
+    <div class="text-center mt-4">
+      <img src="{{ url_for('output_file', filename=filename) }}" class="img-fluid" alt="Processed image with bounding boxes">
+    </div>
+    <!-- Table to show detected vegetables, counts, and weights -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Vegetable</th>
+            <th scope="col">Count</th>
+            <th scope="col">Weight (grams)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for name, info in detected_info.items() %}
+          <tr>
+            <td>{{ name }}</td>
+            <td>{{ info["count"] }}</td>
+            <td>{{ info["weight"] | round(2) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Link to upload another image -->
+    <div class="text-center mt-4">
+      <a href="{{ url_for('index') }}" class="btn btn-primary">Upload another image</a>
+    </div>
+    <!-- Developer information -->
+    <p class="developer-info">Developed by VIT_CH_BOYZ</p>
+    <!-- Powered by information -->
+    <p class="yolo-info">Powered by YOLOv8</p>
+  </div>
+
+  <!-- Bootstrap and JavaScript libraries -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
