@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <title>Veggie Vision</title>
+  <style>
+    .preview-img {
+      max-width: 150px;
+      max-height: 150px;
+      margin-top: 20px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-check {
+      margin-bottom: 10px;
+    }
+    .custom-container {
+      max-width: 600px;
+      background-image: url('D:/Projects/last/templates/vegetables1.png'); /* Replace with your image path */
+      background-size: cover; /* Ensures the image covers the entire container */
+      background-position: center; /* Centers the image within the container */
+      padding: 20px; /* Adds padding inside the container */
+      margin: auto; /* Centers the container horizontally */
+      border: 1px solid #ccc; /* Optional: adds a border around the container */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: adds a shadow effect */
+    }
+    .developer-info, .yolo-info {
+      font-size: 0.9rem;
+      color: gray;
+      text-align: center;
+      margin-top: 20px;
+    }
+    #video {
+      display: none;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container custom-container mt-5">
+    <h1 class="text-center">Veggie Vision</h1>
+    <p class="text-center">Upload an image of vegetables</p>
+    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="mt-4">
+      <div class="form-group text-center">
+        <button id="captureButton" class="btn btn-secondary" onclick="takePhoto(event)">Capture Photo</button>
+        <video id="video"></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <input type="file" class="form-control-file" id="file" name="file" accept="image/*" capture="environment" onchange="previewImage(event)">
+        <div class="text-center">
+          <img id="preview" class="preview-img" src="https://via.placeholder.com/150?text=Image+Preview" alt="Image preview" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Select vegetables:</label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="vegetables" value="brinjal" id="brinjal">
+          <label class="form-check-label" for="brinjal">Brinjal</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="vegetables" value="capsicum" id="capsicum">
+          <label class="form-check-label" for="capsicum">Capsicum</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="vegetables" value="cauliflower" id="cauliflower">
+          <label class="form-check-label" for="cauliflower">Cauliflower</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="vegetables" value="corn" id="corn">
+          <label class="form-check-label" for="corn">Corn</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="vegetables" value="onion" id="onion">
+          <label class="form-check-label" for="onion">Onion</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="vegetables" value="potato" id="potato">
+          <label class="form-check-label" for="potato">Potato</label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
+    <p class="developer-info">Developed by VIT_CH_BOYZ</p>
+    <p class="yolo-info">Powered by YOLOv8</p>
+  </div>
+
+  <script>
+    function takePhoto(event){
+      event.preventDefault();
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+          video.style.display = 'block';
+          video.srcObject = stream;
+          video.play();
+        });
+      }
+
+      video.addEventListener('canplay', function() {
+        setTimeout(() => {
+          const context = canvas.getContext('2d');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          video.style.display = 'none';
+          video.srcObject.getTracks().forEach(track => track.stop());
+          
+          canvas.toBlob(function(blob) {
+            const file = new File([blob], "captured_image.jpg", { type: "image/jpeg" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            document.getElementById('file').files = dataTransfer.files;
+            previewImage({ target: { files: [file] } });
+          }, 'image/jpeg', 1);
+        }, 1000);
+      });
+    }
+
+    function previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const output = document.getElementById('preview');
+        output.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
